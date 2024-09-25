@@ -147,13 +147,13 @@ def EffR(E_list, weights, epsilon, type, tol=1e-10, precon=False):
         if M is None:  # If no preconditioner
             for i in range(m):
                 Br = B[i, :].toarray()
-                Z = cg(L, Br.transpose(), tol=tol)[0]
+                Z = cg(L, Br.transpose(), rtol=tol)[0]
                 R_eff = Br @ Z
                 effR[:, i] = R_eff[0]
         else:  # If preconditioner
             for i in range(m):
                 Br = B[i, :].toarray()
-                Z = cg(L, Br.transpose(), tol=tol, M=M)[0]
+                Z = cg(L, Br.transpose(), rtol=tol, M=M)[0]
                 R_eff = Br @ Z
                 effR[:, i] = R_eff[0]
 
@@ -176,11 +176,11 @@ def EffR(E_list, weights, epsilon, type, tol=1e-10, precon=False):
         if M is None:  # If no preconditioner
             for i in range(int(scale)):
                 SYSr = SYS[i, :].toarray()
-                Z[i, :] = cg(L, SYSr.transpose(), tol=tol)[0]
+                Z[i, :] = cg(L, SYSr.transpose(), rtol=tol)[0]
         else:  # If preconditioner
             for i in range(int(scale)):
                 SYSr = SYS[i, :].toarray()
-                Z[i, :] = cg(L, SYSr.transpose(), tol=tol, M=M)[0]
+                Z[i, :] = cg(L, SYSr.transpose(), rtol=tol, M=M)[0]
 
         effR = np.sum(np.square(Z[:, E_list[:, 0]] - Z[:, E_list[:, 1]]),
                       axis=0)  # Calculate distance between poitns for effR
@@ -201,7 +201,7 @@ def EffR(E_list, weights, epsilon, type, tol=1e-10, precon=False):
                 b = ons @ W @ B
                 b = b.toarray()
 
-                Z = sparse.linalg.cg(L, b.transpose(), tol=tol)[0]
+                Z = cg(L, b.transpose(), rtol=tol)[0]
                 Z = Z.transpose()
 
                 effR_res = effR_res + np.abs(np.square(Z[E_list[:, 0]] - Z[E_list[:, 1]]))
@@ -217,7 +217,7 @@ def EffR(E_list, weights, epsilon, type, tol=1e-10, precon=False):
 
                 b = ons @ W @ B
 
-                Z = sparse.linalg.cg(L, b.transpose, tol=tol, M=M)[0]
+                Z = cg(L, b.transpose(), rtol=tol, M=M)[0]
                 Z = Z.transpose()
 
                 effR_res = effR_res + np.abs(np.square(Z[E_list[:, 0]] - Z[E_list[:, 1]]))
