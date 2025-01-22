@@ -13,12 +13,14 @@ class Network:
             for arg in args:
                 if arg.size() > 10000:
                     A = nx.adjacency_matrix(arg)
+                    progress_bar.update(progress_task, advance=(1.0 / (3.0 * len(args))))
                     if not self._csr_allclose(a=A, b=A.T):
                         A.setdiag(0)
                         A = (A + A.T) / 2
                     self.graph = A
 
                     self._getIDs(arg)
+                    progress_bar.update(progress_task, advance=(1.0 / (3.0 * len(args))))
                     # self.data = arg.nodes.data()
                     # self.pos = self._getpos(arg)
                     self.pop = self._getpop(arg)
@@ -26,6 +28,7 @@ class Network:
                     G = nx.from_scipy_sparse_matrix(A)
                     self.neighbors = self._findneighbors(G)
                     self._getedgelist(A)
+                    progress_bar.update(progress_task, advance=(1.0 / (3.0 * len(args))))
 
                 else:
                     A = nx.adjacency_matrix(arg).toarray()
