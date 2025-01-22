@@ -50,23 +50,23 @@ class Network:
             self.data = None
             start_time = perf_counter()
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
-            temp = er.Elist_Mtrx(E_list, weights)
-            #self.neighbors = {}
+            # temp = er.Elist_Mtrx(E_list, weights)
+            self.neighbors = {}
 
             # -t with 1000 (not 10000) nodes at 0.9% coc dataset
             # total time for edge list parsing: 0.00025889603421092033
             # total time for edge list parsing: 0.00022010388784110546
             # total time for edge list parsing: 0.00018717092461884022
             # total time for edge list parsing: 0.00018056901171803474 
-            # for i in range(np.shape(E_list)[0]):
-            #     n1, n2 = E_list[i, :]
-            #     if n1 not in self.neighbors:
-            #         self.neighbors[n1] = []
-            #     self.neighbors[n1].append(n2)
-            #     if n2 not in self.neighbors:
-            #         self.neighbors[n2] = []
-            #     self.neighbors[n2].append(n1)
-            self.neighbors = self._findneighbors(temp)
+            for i in range(np.shape(E_list)[0]):
+                n1, n2 = E_list[i, :]
+                if n1 not in self.neighbors:
+                    self.neighbors[n1] = []
+                self.neighbors[n1].append(n2)
+                if n2 not in self.neighbors:
+                    self.neighbors[n2] = []
+                self.neighbors[n2].append(n1)
+            # self.neighbors = self._findneighbors(temp)
             end_time = perf_counter()
             print(f"total time for edge list parsing: {end_time - start_time}")
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
@@ -163,8 +163,8 @@ class Network:
     def nodenum(self):
         return self.graph.shape[0]
 
-    def effR(self, epsilon, method, tol=1e-10, precon=False):
-        return er.EffR(self.E_list, self.weights, epsilon, method, tol=tol, precon=precon)
+    def effR(self, epsilon, method, progress_bar, progress_task, tol=1e-10, precon=False):
+        return er.EffR(self.E_list, self.weights, epsilon, method, progress_bar, progress_task, tol=tol, precon=precon)
 
     def spl(self, q, effR, seed=None):
         spl_net = spl.Spl_EffRSparse(n=self.graph.shape[0], E_list=self.E_list, weights=self.weights, q=q, effR=effR,

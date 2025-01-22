@@ -116,17 +116,19 @@ def WDiag(weights):
 #### 'kts', Koutis et. al
 ##### Implement preconditioner M for cg solver? cg(A,b,tol,M=None) - use spilu function or another from scipy.sparse.linalg? https://stackoverflow.com/questions/32865832/preconditioned-conjugate-gradient-and-linearoperator-in-python
 ##### !Warning! For very small networks, a preconditioner is advised!
-def EffR(E_list, weights, epsilon, type, tol=1e-10, precon=False):
+def EffR(E_list, weights, epsilon, type, progress_bar, progress_task, tol=1e-10, precon=False):
     # Find number of edges and number of nodes
     m = np.shape(E_list)[0]
     n = np.max(E_list) + 1
 
     # Obtain necessary matrices from edge list and edge weights
+    progress_bar.update(progress_task, advance=1.0/3.0)
     A = Elist_Mtrx_s(E_list, weights)  # adj matrix - sparse
     L = Lap_s(A)  # Laplacian (sparse array)
     B = sVIM(E_list)  # vertex indices matrix (crs)
     W = WDiag(weights)  # Diagonal weight matrix (dia)
     scale = np.ceil(np.log2(n)) / epsilon  # set scale/resolution for Johnson-Lindenstrauss projection
+    progress_bar.update(progress_task, advance=1.0/3.0)
 
     # Find preconditioner for L if precon is True
     if precon:
@@ -158,6 +160,7 @@ def EffR(E_list, weights, epsilon, type, tol=1e-10, precon=False):
                 effR[:, i] = R_eff[0]
 
         effR = effR[0]
+        progress_bar.update(progress_task, advance=1.0/3.0)
         return effR
 
     # Original Spielman-Srivastava algorithm
@@ -184,6 +187,7 @@ def EffR(E_list, weights, epsilon, type, tol=1e-10, precon=False):
 
         effR = np.sum(np.square(Z[:, E_list[:, 0]] - Z[:, E_list[:, 1]]),
                       axis=0)  # Calculate distance between poitns for effR
+        progress_bar.update(progress_task, advance=1.0/3.0)
         return effR
 
     # Koutis et al. algorithm
@@ -223,4 +227,5 @@ def EffR(E_list, weights, epsilon, type, tol=1e-10, precon=False):
                 effR_res = effR_res + np.abs(np.square(Z[E_list[:, 0]] - Z[E_list[:, 1]]))
 
         effR = effR_res[0]
+        progress_bar.update(progress_task, advance=1.0/3.0)
         return effR
