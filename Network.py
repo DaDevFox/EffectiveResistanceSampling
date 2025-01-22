@@ -47,8 +47,9 @@ class Network:
             self.weights = weights
             self.IDs = None
             self.data = None
+            temp = er.Elist_Mtrx(E_list, weights)
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
-            self.neighbors = self._findneighbors(er.Elist_Mtrx(E_list, weights))
+            self.neighbors = self._findneighbors(temp)
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
             self.graph = self.adj()
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
