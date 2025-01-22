@@ -48,7 +48,6 @@ class Network:
             self.weights = weights
             self.IDs = None
             self.data = None
-            start_time = perf_counter()
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
             # temp = er.Elist_Mtrx(E_list, weights)
             self.neighbors = {}
@@ -67,8 +66,6 @@ class Network:
                     self.neighbors[n2] = []
                 self.neighbors[n2].append(n1)
             # self.neighbors = self._findneighbors(temp)
-            end_time = perf_counter()
-            print(f"total time for edge list parsing: {end_time - start_time}")
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
             self.graph = self.adj()
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
