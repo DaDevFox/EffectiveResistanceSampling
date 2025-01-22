@@ -50,13 +50,7 @@ class Network:
             self.data = None
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
             # temp = er.Elist_Mtrx(E_list, weights)
-            self.neighbors = {}
-
-            # -t with 1000 (not 10000) nodes at 0.9% coc dataset
-            # total time for edge list parsing: 0.00025889603421092033
-            # total time for edge list parsing: 0.00022010388784110546
-            # total time for edge list parsing: 0.00018717092461884022
-            # total time for edge list parsing: 0.00018056901171803474 
+            self.neighbors = []
             for i in range(np.shape(E_list)[0]):
                 n1, n2 = E_list[i, :]
                 if n1 not in self.neighbors:
