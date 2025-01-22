@@ -172,7 +172,10 @@ class Network:
         progress_bar.update(progress_task, advance=1.0/3.0)
         E_list, weights = er.Mtrx_Elist(spl_net)
         progress_bar.update(progress_task, advance=1.0/3.0)
-        return Network(E_list, weights)
+        subtask = progress_bar.add_task(f"[cyan]day -- subnetwork init", total=1.0)
+        network = Network(E_list, weights, progress_bar, subtask)
+        progress_bar.remove_task(subtask)
+        return network
 
     def uni(self, q, seed=None):
         uni_net = spl.UniSampleSparse(n=self.graph.shape[0], E_list=self.E_list, weights=self.weights, q=q, seed=seed)
