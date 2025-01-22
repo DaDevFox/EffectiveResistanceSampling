@@ -166,10 +166,12 @@ class Network:
     def effR(self, epsilon, method, progress_bar, progress_task, tol=1e-10, precon=False):
         return er.EffR(self.E_list, self.weights, epsilon, method, progress_bar, progress_task, tol=tol, precon=precon)
 
-    def spl(self, q, effR, seed=None):
+    def spl(self, q, effR, progress_bar, progress_task, seed=None):
         spl_net = spl.Spl_EffRSparse(n=self.graph.shape[0], E_list=self.E_list, weights=self.weights, q=q, effR=effR,
                                      seed=seed)
+        progress_bar.update(progress_task, advance=1.0/3.0)
         E_list, weights = er.Mtrx_Elist(spl_net)
+        progress_bar.update(progress_task, advance=1.0/3.0)
         return Network(E_list, weights)
 
     def uni(self, q, seed=None):

@@ -122,13 +122,11 @@ def EffR(E_list, weights, epsilon, type, progress_bar, progress_task, tol=1e-10,
     n = np.max(E_list) + 1
 
     # Obtain necessary matrices from edge list and edge weights
-    progress_bar.update(progress_task, advance=1.0/3.0)
     A = Elist_Mtrx_s(E_list, weights)  # adj matrix - sparse
     L = Lap_s(A)  # Laplacian (sparse array)
     B = sVIM(E_list)  # vertex indices matrix (crs)
     W = WDiag(weights)  # Diagonal weight matrix (dia)
     scale = np.ceil(np.log2(n)) / epsilon  # set scale/resolution for Johnson-Lindenstrauss projection
-    progress_bar.update(progress_task, advance=1.0/3.0)
 
     # Find preconditioner for L if precon is True
     if precon:
@@ -152,15 +150,16 @@ def EffR(E_list, weights, epsilon, type, progress_bar, progress_task, tol=1e-10,
                 Z = cg(L, Br.transpose(), tol=tol)[0]
                 R_eff = Br @ Z
                 effR[:, i] = R_eff[0]
+                progress_bar.update(progress_task, advance=1.0/(m + 1))
         else:  # If preconditioner
             for i in range(m):
                 Br = B[i, :].toarray()
                 Z = cg(L, Br.transpose(), tol=tol, M=M)[0]
                 R_eff = Br @ Z
                 effR[:, i] = R_eff[0]
+                progress_bar.update(progress_task, advance=1.0/(m + 1))
 
         effR = effR[0]
-        progress_bar.update(progress_task, advance=1.0/3.0)
         return effR
 
     # Original Spielman-Srivastava algorithm
@@ -180,14 +179,15 @@ def EffR(E_list, weights, epsilon, type, progress_bar, progress_task, tol=1e-10,
             for i in range(int(scale)):
                 SYSr = SYS[i, :].toarray()
                 Z[i, :] = cg(L, SYSr.transpose(), tol=tol)[0]
+                progress_bar.update(progress_task, advance=1.0/(int(scale) + 1))
         else:  # If preconditioner
             for i in range(int(scale)):
                 SYSr = SYS[i, :].toarray()
                 Z[i, :] = cg(L, SYSr.transpose(), tol=tol, M=M)[0]
+                progress_bar.update(progress_task, advance=1.0/(int(scale) + 1))
 
         effR = np.sum(np.square(Z[:, E_list[:, 0]] - Z[:, E_list[:, 1]]),
                       axis=0)  # Calculate distance between poitns for effR
-        progress_bar.update(progress_task, advance=1.0/3.0)
         return effR
 
     # Koutis et al. algorithm
@@ -209,7 +209,7 @@ def EffR(E_list, weights, epsilon, type, progress_bar, progress_task, tol=1e-10,
                 Z = Z.transpose()
 
                 effR_res = effR_res + np.abs(np.square(Z[E_list[:, 0]] - Z[E_list[:, 1]]))
-                progress_bar.update(progress_task, advance=1.0/(3.0 * (int(scale) + 1)))
+                progress_bar.update(progress_task, advance=1.0/(int(scale) + 1))
 
         else:
             for i in range(int(scale)):
@@ -226,7 +226,7 @@ def EffR(E_list, weights, epsilon, type, progress_bar, progress_task, tol=1e-10,
                 Z = Z.transpose()
 
                 effR_res = effR_res + np.abs(np.square(Z[E_list[:, 0]] - Z[E_list[:, 1]]))
-                progress_bar.update(progress_task, advance=1.0/(3.0 * (int(scale) + 1)))
+                progress_bar.update(progress_task, advance=1.0/(int(scale) + 1))
 
         effR = effR_res[0]
         return effR
