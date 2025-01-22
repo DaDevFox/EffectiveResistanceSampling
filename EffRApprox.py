@@ -209,6 +209,7 @@ def EffR(E_list, weights, epsilon, type, progress_bar, progress_task, tol=1e-10,
                 Z = Z.transpose()
 
                 effR_res = effR_res + np.abs(np.square(Z[E_list[:, 0]] - Z[E_list[:, 1]]))
+                progress_bar.update(progress_task, advance=1.0/(3.0 * (int(scale) + 1)))
 
         else:
             for i in range(int(scale)):
@@ -225,7 +226,7 @@ def EffR(E_list, weights, epsilon, type, progress_bar, progress_task, tol=1e-10,
                 Z = Z.transpose()
 
                 effR_res = effR_res + np.abs(np.square(Z[E_list[:, 0]] - Z[E_list[:, 1]]))
+                progress_bar.update(progress_task, advance=1.0/(3.0 * (int(scale) + 1)))
 
         effR = effR_res[0]
-        progress_bar.update(progress_task, advance=1.0/3.0)
         return effR
