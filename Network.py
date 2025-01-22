@@ -8,7 +8,7 @@ import networkx as nx
 
 
 class Network:
-    def __init__(self, E_list, weights, *args):
+    def __init__(self, E_list, weights, progress_bar, progress_task, *args):
         if len(args) != 0:
             for arg in args:
                 if arg.size() > 10000:
@@ -29,12 +29,15 @@ class Network:
 
                 else:
                     A = nx.adjacency_matrix(arg).toarray()
+                    progress_bar.update(progress_task, advance=(1.0 / (3.0 * len(args))))
                     if not np.allclose(A, A.T):
                         np.fill_diagonal(A, 0)
                         A = (A + A.T) / 2
+                    progress_bar.update(progress_task, advance=(1.0 / (3.0 * len(args))))
                     self.E_list, self.weights = er.Mtrx_Elist(A)
                     self.graph = A
                     self.neighbors = self._findneighbors(A)
+                    progress_bar.update(progress_task, advance=(1.0 / (3.0 * len(args))))
 
         else:
             self.E_list = E_list
