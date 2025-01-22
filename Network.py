@@ -51,6 +51,7 @@ class Network:
             start_time = perf_counter()
             progress_bar.update(progress_task, advance=(1.0 / 3.0))
             # temp = er.Elist_Mtrx(E_list, weights)
+            self.neighbors = []
             for i in range(np.shape(E_list)[0]):
                 n1, n2 = E_list[i, :]
                 if n1 not in self.neighbors:
