@@ -41,7 +41,16 @@ class Network:
             self.weights = weights
             self.IDs = None
             self.data = None
-            self.neighbors = self._findneighbors(er.Elist_Mtrx(E_list, weights))
+            self.neighbors = {}
+            for i in range(np.shape(E_list)[0]):
+                n1, n2 = E_list[i, :]
+                if n1 not in self.neighbors:
+                    self.neighbors[n1] = []
+                self.neighbors[n1].append(n2)
+                if n2 not in self.neighbors:
+                    self.neighbors[n2] = []
+                self.neighbors[n2].append(n1)
+
             self.graph = self.adj()
 
     def _getIDs(self, G):
